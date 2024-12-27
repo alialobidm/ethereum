@@ -112,16 +112,8 @@ impl rlp::Decodable for EIP2930Transaction {
 			input: rlp.val_at(6)?,
 			access_list: rlp.list_at(7)?,
 			odd_y_parity: rlp.val_at(8)?,
-			r: {
-				let mut rarr = [0_u8; 32];
-				rlp.val_at::<U256>(9)?.to_big_endian(&mut rarr);
-				H256::from(rarr)
-			},
-			s: {
-				let mut sarr = [0_u8; 32];
-				rlp.val_at::<U256>(10)?.to_big_endian(&mut sarr);
-				H256::from(sarr)
-			},
+			r: H256::from(rlp.val_at::<U256>(9)?.to_big_endian()),
+			s: H256::from(rlp.val_at::<U256>(10)?.to_big_endian()),
 		})
 	}
 }

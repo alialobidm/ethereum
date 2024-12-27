@@ -186,7 +186,7 @@ pub struct LegacyTransaction {
 
 impl LegacyTransaction {
 	pub fn hash(&self) -> H256 {
-		H256::from_slice(Keccak256::digest(&rlp::encode(self)).as_slice())
+		H256::from_slice(Keccak256::digest(rlp::encode(self)).as_slice())
 	}
 
 	pub fn to_message(self) -> LegacyTransactionMessage {
@@ -224,16 +224,8 @@ impl rlp::Decodable for LegacyTransaction {
 		}
 
 		let v = rlp.val_at(6)?;
-		let r = {
-			let mut rarr = [0_u8; 32];
-			rlp.val_at::<U256>(7)?.to_big_endian(&mut rarr);
-			H256::from(rarr)
-		};
-		let s = {
-			let mut sarr = [0_u8; 32];
-			rlp.val_at::<U256>(8)?.to_big_endian(&mut sarr);
-			H256::from(sarr)
-		};
+		let r = H256::from(rlp.val_at::<U256>(7)?.to_big_endian());
+		let s = H256::from(rlp.val_at::<U256>(8)?.to_big_endian());
 		let signature = TransactionSignature::new(v, r, s)
 			.ok_or(DecoderError::Custom("Invalid transaction signature format"))?;
 
@@ -262,7 +254,7 @@ pub struct LegacyTransactionMessage {
 
 impl LegacyTransactionMessage {
 	pub fn hash(&self) -> H256 {
-		H256::from_slice(Keccak256::digest(&rlp::encode(self)).as_slice())
+		H256::from_slice(Keccak256::digest(rlp::encode(self)).as_slice())
 	}
 }
 
